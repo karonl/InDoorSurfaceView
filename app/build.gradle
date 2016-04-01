@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "24.0.0 rc1"
+
+    defaultConfig {
+        applicationId "com.karonl.surfaceinstance"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        //添加新测试库
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+
+    //对应导入
+    androidTestCompile 'com.android.support:appcompat-v7:23.2.1'
+    androidTestCompile 'com.android.support:design:23.2.1'
+    androidTestCompile 'com.android.support:support-annotations:23.2.1'
+    // Android JUnit Runner
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    // JUnit4 Rules
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    // Espresso core
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    // Espresso-contrib for DatePicker, RecyclerView, Drawer actions, Accessibility checks, CountingIdlingResource
+    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2'
+    // Espresso-web for WebView support
+    androidTestCompile 'com.android.support.test.espresso:espresso-web:2.2.2'
+    // Espresso-idling-resource for synchronization with background jobs
+    androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
+}
