@@ -1,5 +1,7 @@
 package com.karonl.surfaceinstance;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
 
     private InDoorSurfaceView view;
     private TextView textview;
+    private DataAdapter adapter;
+    List<PathUnit> unitList = new ArrayList<>();
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -27,10 +31,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //背景图
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+        final Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
+        //数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                }catch (InterruptedException e){}
+                getUnitList();
+                adapter.refreshData();
+            }
+        }).start();
+        adapter = new DataAdapter(unitList, bmp);
 
         textview = (TextView)findViewById(R.id.frames);
+
         view = (InDoorSurfaceView)findViewById(R.id.surface);
-        view.init(null, getList());//初始化
+
+        view.init(adapter);//初始化
         view.onFramesListener(new InDoorSurfaceView.FramesListener() {
             @Override
             public void onRefresh(float number) {
@@ -39,11 +61,21 @@ public class MainActivity extends AppCompatActivity {
                 message.sendToTarget();
             }
         });
+
+
     }
 
-    private List<PointF> getList(){
-        float density = this.getResources().getDisplayMetrics().density;
 
+    //图案列表
+    private void getUnitList(){
+        PathUnit unit = new PathUnit(getList());
+        unit.setName("广州文琪信");
+        unitList.add(unit);
+    }
+
+    //每个图案的坐标组合
+    private List<PointF> getList(){
+        float density = getResources().getDisplayMetrics().density;
         List<PointF> pointList = new ArrayList<>();
         pointList.add(new PointF(99.1f * density,673.1f * density));
         pointList.add(new PointF(222.1f * density,670.1f * density));
@@ -53,5 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         return pointList;
     }
+
+
 
 }

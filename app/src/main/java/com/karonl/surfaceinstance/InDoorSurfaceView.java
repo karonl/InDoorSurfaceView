@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -16,6 +17,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+
+import com.karonl.surfaceinstance.Interface.BitBuffer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,67 +36,29 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private float mPicWidth, mPicHeight; //图案宽度,图案高度,实时状态
     private float screenWidth, screenHeight;
     private PointF mStartPoint = new PointF(); //下手点
-    private List<PathUnit> unitList = new ArrayList<>();
     private float scale; //放大倍数
     private float bx ,by; //图案初始坐标
-    private Bitmap bmp;
-    private Bitmap bufferBitmap;
     private Canvas c = null;
-    private Canvas bufferCanvas = null;
     private Thread drawThread;//绘制线程
     private SurfaceHolder surfaceHolder;
-
+    private BitBuffer adapter;
 
     public InDoorSurfaceView(Context context, AttributeSet attributeSet){
         super(context, attributeSet);
         this.setOnTouchListener(this);
         getHolder().addCallback(this);
-    }
-
-    public void init(Bitmap tmp, List<PointF> list) {
         surfaceHolder = getHolder();
-
-        if(tmp == null) {
-            BitmapFactory.Options opt = new BitmapFactory.Options();
-            opt.inPreferredConfig = Bitmap.Config.RGB_565;
-            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
-        } else
-            bmp = tmp;
-        drawPath(list);//添加图案,原始像素
-
-        bufferBitmap = Bitmap.createBitmap(bmp.getWidth(),bmp.getHeight(), Bitmap.Config.RGB_565);//创建内存位图
-        bufferCanvas = new Canvas(bufferBitmap);//创建绘图画布
-        drawOnBuffer();
-        //
-        setPicCenter();
     }
 
-    /*
-    *
-    * 添加图画
-    *
-    * */
-    private void drawPath(List<PointF> pointList){
-        PathUnit unit = new PathUnit(pointList);
-        unit.setName("广州文琪信息科技有限公司");
-        unitList.add(unit);
+    public void init(BitBuffer adapter) {
+        this.adapter = adapter;
     }
 
-    //画入缓冲区
-    private void drawOnBuffer(){
-        //画背景图
-        bufferCanvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()), new Rect(0, 0, bmp.getWidth(), bmp.getHeight()), null);
-        //画图案
-        for (PathUnit path : unitList) {
-            bufferCanvas.drawPath(path.path, getPaint());
-        }
-    }
-
-    private void setPicCenter(){
+    private void setPicInit(){
         if(bx != 0 && by != 0)return;
         //图片初始状态
-        mPicWidth = bmp.getWidth() * scale;
-        mPicHeight = bmp.getHeight() * scale;
+        mPicWidth = adapter.getWidth() * getScale(true);
+        mPicHeight = adapter.getHeight() * getScale(true);
         //初始坐标
         bx = (screenWidth - mPicWidth)/2;
         by = (screenHeight - mPicHeight)/2;
@@ -113,7 +79,6 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         drawThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.e("x","x4");
                 while (_run){
                     showBit();//绘制
                 }
@@ -122,6 +87,14 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         drawThread.start();
     }
 
+    //获得比例,实时比例
+    private float getScale(boolean original){
+        if(scale != 0 && !original)return scale;
+        float scaleWidth = screenWidth / adapter.getWidth();
+        float scaleHeight = screenHeight / adapter.getHeight();
+        float scale = scaleWidth>scaleHeight ? scaleHeight:scaleWidth;
+        return scale;
+    }
     /*
     *
     * 绘制图画
@@ -131,10 +104,12 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         long startTime = System.currentTimeMillis();
         synchronized (surfaceHolder) {
             c = surfaceHolder.lockCanvas();
-            c.drawColor(Color.GRAY);
-            c.translate(bx, by);
-            c.scale(scale, scale);
-            c.drawBitmap(bufferBitmap,0,0,new Paint());
+            if(c!=null) {
+                c.drawColor(Color.GRAY);
+                c.translate(bx, by);
+                c.scale(scale, scale);
+                c.drawBitmap(adapter.getBitBuffer(), 0, 0, new Paint());
+            }
             try {
                 surfaceHolder.unlockCanvasAndPost(c);
             }catch (IllegalStateException e){ //已经释放
@@ -154,16 +129,12 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
             }
         }
         sendToInterface(System.currentTimeMillis() - startTime);
-//        while(diffTime <= 16) {
-//            diffTime = (int)(System.currentTimeMillis() - startTime);
-//            Thread.yield();
-//        }
     }
     //显示帧数
-    private boolean sendable = true;
+    private boolean sendAble = true;
     private void sendToInterface(final float diffTime){
-        if(listener!=null && sendable){
-            sendable = false;
+        if(listener!=null && sendAble){
+            sendAble = false;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -173,7 +144,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     } catch (InterruptedException e){
 
                     } finally {
-                        sendable = true;
+                        sendAble = true;
                     }
                 }
             }).start();
@@ -188,32 +159,23 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     * */
     private void zoomMap(MotionEvent event){
         synchronized (InDoorSurfaceView.class) {
-
             float newDist = spacing(event);
             float scale1 = newDist / mStartDistance;
             mStartDistance = newDist;
-
-
             float tmp = scale * scale1;//缩放了比例值
             if(tmp < getScale(true) * 3 && tmp > getScale(true) * 0.6) {//放大的倍数范围
                 scale = tmp;
             } else {
                 return;
             }
-
             mPicHeight *= scale1;//缩放了高宽
             mPicWidth *= scale1;
-
-
             float fx = (event.getX(1) - event.getX(0))/2 + event.getX(0);//中点坐标
             float fy = (event.getY(1) - event.getY(0))/2 + event.getY(0);
-
             float XIn = fx - bx;//获得中点在图中的坐标
             float YIn = fy - by;
-
             XIn *= scale1;//坐标根据图片缩放而变化
             YIn *= scale1;
-
             bx = fx - XIn;//左上角的坐标等于中点坐标加图中偏移的坐标
             by = fy - YIn;
             //showBit(bx, by);
@@ -234,7 +196,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
 
     private void clickMap(MotionEvent event){
-        for(PathUnit region: unitList){
+        for(PathUnit region: adapter.getPathUnit()){
             if (region.region.contains((int) ((event.getX() - bx) /scale), (int) ((event.getY() - by) /scale) )) {
                 Log.e(this.getClass().getName(),"click");
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
@@ -250,7 +212,6 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
             }
         }
     }
-
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -286,13 +247,13 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         return true;
     }
 
-
     // 初始化
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.e("x","surfaceCreated");
         screenWidth = this.getWidth();
         screenHeight = this.getHeight();
+        setPicInit();
         looperRun();
     }
 
@@ -305,27 +266,6 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         stopThread(true);
         drawThread.interrupt();
         drawThread = null;
-    }
-
-    //获得比例
-    private float getScale(boolean original){
-        if(scale != 0 && !original)return scale;
-        float scaleWidth = screenWidth / bmp.getWidth();
-        float scaleHeight = screenHeight / bmp.getHeight();
-        float scale = scaleWidth>scaleHeight ? scaleHeight:scaleWidth;
-        return scale;
-    }
-
-    //获得画笔
-    private Paint paint;//画笔属性
-    private Paint getPaint(){
-        if(paint == null) {
-            paint = new Paint();
-            paint.setColor(Color.BLUE);
-            paint.setStyle(Paint.Style.FILL);
-            paint.setAlpha(30);
-        }
-        return paint;
     }
 
     //获取距离运算
