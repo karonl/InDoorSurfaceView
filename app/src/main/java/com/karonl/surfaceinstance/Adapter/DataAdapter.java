@@ -1,10 +1,8 @@
-package com.karonl.surfaceinstance;
+package com.karonl.surfaceinstance.Adapter;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.PointF;
 
-import com.karonl.surfaceinstance.Interface.BitBuffer;
+import com.karonl.surfaceinstance.PathUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,7 @@ public class DataAdapter extends BitAdapter {
     private List<PathUnit> list;
 
     public DataAdapter(List<PathUnit> list, Bitmap bmp){
-        drawBackground(bmp);//绘制背景
+        super(bmp);//绘制背景
         this.list = list;
         drawBuffer(this);
     }

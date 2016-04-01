@@ -7,14 +7,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.karonl.surfaceinstance.Adapter.DataAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private InDoorSurfaceView view;
     private TextView textview;
     private DataAdapter adapter;
     List<PathUnit> unitList = new ArrayList<>();
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.surface);
+
         //背景图
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -50,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         textview = (TextView)findViewById(R.id.frames);
 
-        view = (InDoorSurfaceView)findViewById(R.id.surface);
-
+        InDoorSurfaceView view = new InDoorSurfaceView(this,null);
         view.init(adapter);//初始化
         view.onFramesListener(new InDoorSurfaceView.FramesListener() {
             @Override
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 message.sendToTarget();
             }
         });
-
+        frameLayout.addView(view);
 
     }
 
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     //图案列表
     private void getUnitList(){
         PathUnit unit = new PathUnit(getList());
-        unit.setName("广州文琪信");
+        unit.setName("广州文琪信息科技");
         unitList.add(unit);
     }
 
