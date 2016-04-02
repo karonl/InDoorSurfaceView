@@ -22,9 +22,13 @@ import com.karonl.surfaceinstance.Interface.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by karonl on 16/3/21.
+ * 
  */
 public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
 
@@ -40,7 +44,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private float bx ,by; //图案初始坐标
     private Canvas c = null;
     private Thread drawThread;//绘制线程
-    private SurfaceHolder surfaceHolder;
+    private final SurfaceHolder surfaceHolder;
     private BitBuffer adapter;
 
     public InDoorSurfaceView(Context context, AttributeSet attributeSet){
@@ -132,23 +136,17 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
     //显示帧数
     private boolean sendAble = true;
+    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
     private void sendToInterface(final float diffTime){
         if(listener!=null && sendAble){
             sendAble = false;
-            new Thread(new Runnable() {
+            scheduledThreadPool.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    try{
-                        listener.onRefresh(diffTime);
-                        Thread.sleep(500);
-                    } catch (InterruptedException e){
-
-                    } finally {
-                        sendAble = true;
-                    }
+                    listener.onRefresh(diffTime);
+                    sendAble = true;
                 }
-            }).start();
-
+            }, 500, TimeUnit.MILLISECONDS);
         }
     }
 

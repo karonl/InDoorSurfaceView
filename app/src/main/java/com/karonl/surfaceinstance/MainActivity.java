@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
         final Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
-        //数据
+        //延迟底图区域数据加载
         new Thread(new Runnable() {
             @Override
             public void run() {
