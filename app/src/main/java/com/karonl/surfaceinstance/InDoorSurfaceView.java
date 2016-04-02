@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by karonl on 16/3/21.
- * 
+ *
  */
 public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
 
