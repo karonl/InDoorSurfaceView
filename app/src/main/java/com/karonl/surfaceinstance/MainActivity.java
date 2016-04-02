@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textview;
     private DataAdapter adapter;
+    private Bitmap bmp;
     List<PathUnit> unitList = new ArrayList<>();
     private Handler handler = new Handler(){
         @Override
@@ -36,12 +37,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.surface);
+        InDoorSurfaceView view = (InDoorSurfaceView)findViewById(R.id.surface);
 
-        //背景图
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        final Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
         //延迟展区区域数据加载
         new Thread(new Runnable() {
             @Override
@@ -49,16 +46,22 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Thread.sleep(2000);
                 }catch (InterruptedException e){}
-                getUnitList();
+
+                //背景图
+                BitmapFactory.Options opt = new BitmapFactory.Options();
+                opt.inPreferredConfig = Bitmap.Config.RGB_565;
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
+                adapter.setBmp(bmp);//设置图片
+                getUnitList();//设置数组
+                adapter.setList(unitList);//设置数组
                 adapter.refreshData();
             }
         }).start();
-        adapter = new DataAdapter(unitList, bmp);//数据适配器
+        adapter = new DataAdapter();//数据适配器
 
         textview = (TextView)findViewById(R.id.frames);
 
-        InDoorSurfaceView view = new InDoorSurfaceView(this,null);
-        view.init(adapter);//初始化
+        view.setAdapter(adapter);//初始化
 
         view.setOnClickMapListener(new InDoorSurfaceView.onClickMapListener() {
             @Override
@@ -86,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 message.sendToTarget();
             }
         });
-        frameLayout.addView(view);
 
     }
 

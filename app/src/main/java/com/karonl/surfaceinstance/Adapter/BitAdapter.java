@@ -17,20 +17,38 @@ import java.util.List;
  */
 public abstract class BitAdapter implements BitBuffer {
 
-    Bitmap bitmap = null;
-    Canvas bufferCanvas = null;
-    List<PathUnit> pathUnitList = null;
+    private Bitmap bitmap = null;
+    private Canvas bufferCanvas = null;
+    private List<PathUnit> pathUnitList = null;
+    private AttrListener listener;
 
-    public BitAdapter(Bitmap bg){
-        //根据底图申请缓冲区
-        bitmap = Bitmap.createBitmap(bg.getWidth(),bg.getHeight(), Bitmap.Config.RGB_565);//创建内存位图
-        //创建空白绘图画布
-        bufferCanvas = new Canvas(bitmap);
-        //底图进来后绘制到缓冲区
-        bufferCanvas.drawBitmap(bg, new Rect(0, 0, bg.getWidth(), bg.getHeight()), new Rect(0, 0, bg.getWidth(), bg.getHeight()), null);
+    public BitAdapter(){
 
     }
 
+    public interface AttrListener {
+        void onRefresh();
+    }
+
+    @Override
+    public void setOnAdapterListener(BitAdapter.AttrListener listener) {
+        this.listener = listener;
+    }
+
+    public void drawBitmap(BitAdapter child){
+        Bitmap bg = child.getBgBitmap();
+        if(bg != null) {
+            //根据底图申请缓冲区
+            bitmap = Bitmap.createBitmap(bg.getWidth(), bg.getHeight(), Bitmap.Config.RGB_565);//创建内存位图
+            //创建空白绘图画布
+            bufferCanvas = new Canvas(bitmap);
+            //底图进来后绘制到缓冲区
+            bufferCanvas.drawBitmap(bg, new Rect(0, 0, bg.getWidth(), bg.getHeight()), new Rect(0, 0, bg.getWidth(), bg.getHeight()), null);
+            //改变背景改变缩放
+            if (listener != null) listener.onRefresh();
+            //刷新监听器缩放
+        }
+    }
 
     public void drawBuffer(BitAdapter child) {
         //填充数据
@@ -42,20 +60,11 @@ public abstract class BitAdapter implements BitBuffer {
     }
 
     public abstract List<PathUnit> getPathUnit();
+    public abstract Bitmap getBgBitmap();
 
     @Override
     public Bitmap getBitBuffer() {
         return bitmap;
-    }
-
-    @Override
-    public float getHeight() {
-        return bitmap.getHeight();
-    }
-
-    @Override
-    public float getWidth() {
-        return bitmap.getWidth();
     }
 
     //获得画笔

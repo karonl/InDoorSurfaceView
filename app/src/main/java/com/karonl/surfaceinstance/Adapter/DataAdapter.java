@@ -14,15 +14,42 @@ import java.util.List;
 public class DataAdapter extends BitAdapter {
 
     private List<PathUnit> list;
+    private Bitmap bmp;
 
-    public DataAdapter(List<PathUnit> list, Bitmap bmp){
-        super(bmp);//绘制背景
+    public DataAdapter(){
+
+    }
+
+    public DataAdapter(List<PathUnit> list){
         this.list = list;
+        drawBitmap(this);
         drawBuffer(this);
     }
 
-    public void refreshData(){
+    public DataAdapter(List<PathUnit> list, Bitmap bmp){
+        this.bmp = bmp;
+        this.list = list;
+        drawBitmap(this);
         drawBuffer(this);
+    }
+
+    public void setList(List<PathUnit> list){
+        this.list = list;
+    }
+
+    public void setBmp(Bitmap bmp) {
+        this.bmp = null;
+        this.bmp = bmp;
+    }
+
+    public void refreshData(){
+        drawBitmap(this);
+        drawBuffer(this);
+    }
+
+    @Override
+    public Bitmap getBgBitmap() {
+        return this.bmp;
     }
 
     @Override

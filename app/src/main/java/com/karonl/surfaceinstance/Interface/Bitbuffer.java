@@ -2,6 +2,7 @@ package com.karonl.surfaceinstance.Interface;
 
 import android.graphics.Bitmap;
 
+import com.karonl.surfaceinstance.Adapter.BitAdapter;
 import com.karonl.surfaceinstance.PathUnit;
 
 import java.util.List;
@@ -13,6 +14,5 @@ public interface BitBuffer {
 
     List<PathUnit> getPathUnit();
     Bitmap getBitBuffer();
-    float getWidth();
-    float getHeight();
+    void setOnAdapterListener(BitAdapter.AttrListener listener);
 }
