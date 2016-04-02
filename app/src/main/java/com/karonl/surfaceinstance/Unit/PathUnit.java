@@ -1,4 +1,4 @@
-package com.karonl.surfaceinstance;
+package com.karonl.surfaceinstance.Unit;
 
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -18,7 +18,7 @@ public class PathUnit {
     public Region region;
     public Path path;
 
-    protected PathUnit(List<PointF> list){
+    public PathUnit(List<PointF> list){
         int i = 0;
         path = new Path();
         for(PointF point : list){

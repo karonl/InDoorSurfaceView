@@ -10,10 +10,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.TextView;
 
 import com.karonl.surfaceinstance.Adapter.DataAdapter;
+import com.karonl.surfaceinstance.Unit.PathUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +22,22 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textview;
-    private DataAdapter adapter;
+    private DataAdapter adapter =  new DataAdapter();;
     private Bitmap bmp;
     List<PathUnit> unitList = new ArrayList<>();
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            float fr = (float)msg.obj;
-            int fps = (int)(1000f / fr);
-            textview.setText("FPS: "+fps+"");
+            switch (msg.what) {
+                case 1:
+                    float fr = (float) msg.obj;
+                    int fps = (int) (1000f / fr);
+                    textview.setText("FPS: " + fps + "");
+                    break;
+                case 2:
+                    findViewById(R.id.tip).setVisibility(View.GONE);
+            }
         }
     };
     @Override
@@ -55,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
                 getUnitList();//设置数组
                 adapter.setList(unitList);//设置数组
                 adapter.refreshData();
+                Message message = handler.obtainMessage();
+                message.what = 2;
+                message.sendToTarget();
             }
         }).start();
-        adapter = new DataAdapter();//数据适配器
 
         textview = (TextView)findViewById(R.id.frames);
 
@@ -85,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh(float number) {
                 Message message = handler.obtainMessage();
+                message.what = 1;
                 message.obj = number;
                 message.sendToTarget();
             }

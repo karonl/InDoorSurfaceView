@@ -7,7 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.karonl.surfaceinstance.Interface.BitBuffer;
-import com.karonl.surfaceinstance.PathUnit;
+import com.karonl.surfaceinstance.Unit.PathUnit;
 
 import java.util.List;
 

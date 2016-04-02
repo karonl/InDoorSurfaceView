@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.karonl.surfaceinstance.Adapter.BitAdapter;
 import com.karonl.surfaceinstance.Interface.BitBuffer;
+import com.karonl.surfaceinstance.Unit.PathUnit;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,6 +29,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private static final int DRAG = 1;// 拖动
     private static final int ZOOM = 2;// 放大
     private int mStatus = 0;//状态
+    private int mClick = 0;//状态
     private float mStartDistance; //初始距离
     private float mPicWidth, mPicHeight; //图案宽度,图案高度,实时状态
     private float screenWidth, screenHeight;
@@ -54,7 +56,6 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
 
     private void setAdapterInit(){
-        //setScale(true);
         adapter.setOnAdapterListener(new BitAdapter.AttrListener() {
             @Override
             public void onRefresh() {
@@ -132,15 +133,14 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         /**计算出绘画一次更新的毫秒数**/
         int diffTime = (int) (endTime - startTime);
-        if (diffTime < 16) {
+        if (diffTime < 18) {
             try {
-                Thread.sleep(16 - diffTime);
+                Thread.sleep(18 - diffTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         sendToInterface(System.currentTimeMillis() - startTime);//发送一次循环运行总时间
-        //Log.i("x","c");
     }
 
     //显示帧数
@@ -232,6 +232,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         if(adapter != null)
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                mClick = 0;
                 mStartPoint.set(event.getX(), event.getY());
                 mStatus = DRAG;
                 break;
@@ -245,14 +246,16 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
             case MotionEvent.ACTION_MOVE:
                 if (mStatus == DRAG) {
                     drawMap(event);
+                    mClick = 1;
                 } else {
-                    if (event.getPointerCount() == 1)
-                        return true;
+                    if (event.getPointerCount() == 1) return true;
                     zoomMap(event);
+                    mClick = 1;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                clickMap(event);
+                if(mClick == 0)
+                    clickMap(event);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 break;
@@ -270,7 +273,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         screenHeight = this.getHeight();
 
         if(adapter!=null) setAdapterInit();
-
+        stopThread(false);
         looperRun();
     }
 

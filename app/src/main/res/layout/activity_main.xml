@@ -18,4 +18,13 @@
         android:textColor="@android:color/white"
         android:background="@android:color/black"
         android:text="FPS: 60" />
+
+    <TextView
+        android:id="@+id/tip"
+        android:layout_centerInParent="true"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="延迟2秒加载地图数据.."/>
 </RelativeLayout>
