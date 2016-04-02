@@ -132,7 +132,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 e.printStackTrace();
             }
         }
-        sendToInterface(System.currentTimeMillis() - startTime);
+        sendToInterface(System.currentTimeMillis() - startTime);//发送一次循环运行总时间
     }
     //显示帧数
     private boolean sendAble = true;
@@ -193,20 +193,18 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         }
     }
 
+    public void setOnClickMapListener(onClickMapListener maplistener){
+        this.maplistener = maplistener;
+    }
+
+    interface onClickMapListener{
+        void onClick(PathUnit unit);
+    }
+    private onClickMapListener maplistener;
     private void clickMap(MotionEvent event){
         for(PathUnit region: adapter.getPathUnit()){
             if (region.region.contains((int) ((event.getX() - bx) /scale), (int) ((event.getY() - by) /scale) )) {
-                Log.e(this.getClass().getName(),"click");
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                dialog.setTitle("企业介绍");
-                dialog.setMessage(""+region.getName());
-                dialog.setPositiveButton("进入微官网", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                dialog.show();
+                if(listener!=null)maplistener.onClick(region);
             }
         }
     }

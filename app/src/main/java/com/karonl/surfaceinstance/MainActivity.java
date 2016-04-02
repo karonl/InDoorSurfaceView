@@ -1,12 +1,15 @@
 package com.karonl.surfaceinstance;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
         final Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
-        //延迟底图区域数据加载
+        //延迟展区区域数据加载
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -50,12 +53,31 @@ public class MainActivity extends AppCompatActivity {
                 adapter.refreshData();
             }
         }).start();
-        adapter = new DataAdapter(unitList, bmp);
+        adapter = new DataAdapter(unitList, bmp);//数据适配器
 
         textview = (TextView)findViewById(R.id.frames);
 
         InDoorSurfaceView view = new InDoorSurfaceView(this,null);
         view.init(adapter);//初始化
+
+        view.setOnClickMapListener(new InDoorSurfaceView.onClickMapListener() {
+            @Override
+            public void onClick(PathUnit region) {
+                Log.e(this.getClass().getName(),"click");
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                dialog.setTitle("企业介绍");
+                dialog.setMessage(""+region.getName());
+                dialog.setPositiveButton("进入微官网", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dialog.show();
+            }
+        });
+
+
         view.onFramesListener(new InDoorSurfaceView.FramesListener() {
             @Override
             public void onRefresh(float number) {
