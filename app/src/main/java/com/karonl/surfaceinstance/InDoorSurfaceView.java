@@ -137,7 +137,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
             try {
                 Thread.sleep(18 - diffTime);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
         sendToInterface(System.currentTimeMillis() - startTime);//发送一次循环运行总时间
