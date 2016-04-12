@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by karonl on 16/3/21.
+ * 绘制图案的画板,可以直接通过xml生成对象,在没有设置canvas时绘制空白页,因此可以下载完图片再更新进去
  */
 public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
 
@@ -246,6 +247,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
             case MotionEvent.ACTION_MOVE:
                 if (mStatus == DRAG) {
                     drawMap(event);
+                    Log.i("move","move");
                     mClick = 1;
                 } else {
                     if (event.getPointerCount() == 1) return true;
@@ -268,23 +270,18 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
     // 界面初始化
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.e("x", "surfaceCreated");
         screenWidth = this.getWidth();
         screenHeight = this.getHeight();
-
         if(adapter!=null) setAdapterInit();
         stopThread(false);
         looperRun();
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.e("x", "surfaceChanged");
-    }
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.e("x", "surfaceDestroyed");
         stopThread(true);
         drawThread.interrupt();
         drawThread = null;

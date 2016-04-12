@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Created by karonl on 16/4/1.
- * 负责向view输出bitmap缓存图片
+ * 负责向view输出bitmap缓存图片,并清理了构造最终图片时候的bitmap,防止内存泄漏
  */
 public abstract class BitAdapter implements BitBuffer {
 
@@ -57,6 +57,7 @@ public abstract class BitAdapter implements BitBuffer {
         for (PathUnit path : pathUnitList) {
             bufferCanvas.drawPath(path.path, getPaint());
         }
+        bufferCanvas = null;
     }
 
     public abstract List<PathUnit> getPathUnit();

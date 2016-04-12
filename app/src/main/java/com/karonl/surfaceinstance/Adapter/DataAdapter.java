@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created by karonl on 16/4/1.
- * 处理和填充数据
+ * 处理和填充数据drawBitmap,drawBuffer是BitAdapter的方法
  */
 public class DataAdapter extends BitAdapter {
 
@@ -45,6 +45,7 @@ public class DataAdapter extends BitAdapter {
     public void refreshData(){
         drawBitmap(this);
         drawBuffer(this);
+        this.bmp = null;
     }
 
     @Override
