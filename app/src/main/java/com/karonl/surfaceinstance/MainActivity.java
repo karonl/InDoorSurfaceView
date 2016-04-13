@@ -15,7 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.karonl.surfaceinstance.Adapter.DataAdapter;
+import com.karonl.surfaceinstance.Unit.DataJson;
 import com.karonl.surfaceinstance.Unit.PathUnit;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(200);
                 }catch (InterruptedException e){}
 
                 //背景图
@@ -79,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(PathUnit region) {
                 Log.e(this.getClass().getName(),"click");
                 AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-                dialog.setTitle("企业介绍");
+                dialog.setTitle("商店介绍");
                 dialog.setMessage(""+region.getName());
-                dialog.setPositiveButton("进入微官网", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -107,21 +112,34 @@ public class MainActivity extends AppCompatActivity {
 
     //图案列表
     private void getUnitList(){
-        PathUnit unit = new PathUnit(getList());
-        unit.setName("广州文琪信息科技");
-        unitList.add(unit);
+        DataJson data = new DataJson();
+        for(int i = 0; i < data.size(); i++){
+            JSONObject jsonObject = data.getArray(i);
+            PathUnit unit = new PathUnit(getList(jsonObject));
+            try {
+                unit.setName(jsonObject.getString("name"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            unitList.add(unit);
+        }
     }
 
     //每个图案的坐标组合
-    private List<PointF> getList(){
+    private List<PointF> getList(JSONObject jsonObject){
         float density = getResources().getDisplayMetrics().density;
         List<PointF> pointList = new ArrayList<>();
-        pointList.add(new PointF(99.1f * density,673.1f * density));
-        pointList.add(new PointF(222.1f * density,670.1f * density));
-        pointList.add(new PointF(227.1f * density,327.1f * density));
-        pointList.add(new PointF(94.1f * density,321.1f * density));
-        pointList.add(new PointF(100.1f * density,674.1f * density));
-
+        JSONArray array;
+        try {
+            array = jsonObject.getJSONArray("area");
+            for(int r = 0; r < array.length(); r++){
+                float x = ((JSONObject)(array.get(r))).getInt("x");
+                float y = ((JSONObject)(array.get(r))).getInt("y");
+                pointList.add(new PointF( x * density, y * density));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return pointList;
     }
 
