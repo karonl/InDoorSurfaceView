@@ -32,5 +32,4 @@ proguard/
 captures/
 .DS_Store
 .idea
-app
 SurfaceInstance.iml
