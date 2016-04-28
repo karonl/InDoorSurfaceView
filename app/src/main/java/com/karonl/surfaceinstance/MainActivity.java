@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 opt.inPreferredConfig = Bitmap.Config.RGB_565;
                 bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zxc, opt);//图片资源
                 adapter.setBmp(bmp);//设置图片
-                bmp.recycle();
                 bmp = null;
                 getUnitList();//设置数组
                 adapter.setList(unitList);//设置数组

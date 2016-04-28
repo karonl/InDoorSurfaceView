@@ -38,7 +38,6 @@ public class DataAdapter extends BitAdapter {
     }
 
     public void setBmp(Bitmap bmp) {
-        this.bmp.recycle();
         this.bmp = null;
         this.bmp = bmp;
     }
@@ -46,7 +45,9 @@ public class DataAdapter extends BitAdapter {
     public void refreshData(){
         drawBitmap(this);
         drawBuffer(this);
-        this.bmp.recycle();
+        if (!bmp.isRecycled()) {
+            bmp.recycle();
+        }
         this.bmp = null;
     }
 

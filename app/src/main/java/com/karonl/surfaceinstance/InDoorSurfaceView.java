@@ -225,6 +225,7 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         }
     }
 
+    private int x, y;
     /**
      * 监听点击事件
      */
@@ -233,6 +234,8 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
         if(adapter != null)
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                x = (int) event.getX();
+                y = (int) event.getY();
                 mClick = 0;
                 mStartPoint.set(event.getX(), event.getY());
                 mStatus = DRAG;
@@ -245,14 +248,17 @@ public class InDoorSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (mStatus == DRAG) {
-                    drawMap(event);
-                    Log.i("move","move");
-                    mClick = 1;
+                if( Math.abs(x - event.getX()) < 3 || Math.abs(y - event.getY()) < 3 ){
+                    mClick = 0;
                 } else {
-                    if (event.getPointerCount() == 1) return true;
-                    zoomMap(event);
-                    mClick = 1;
+                    if (mStatus == DRAG) {
+                        drawMap(event);
+                        mClick = 1;
+                    } else {
+                        if (event.getPointerCount() == 1) return true;
+                        zoomMap(event);
+                        mClick = 1;
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
