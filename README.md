@@ -116,8 +116,11 @@ view.onFramesListener(new InDoorSurfaceView.FramesListener() {
 ## 环境:
 
 compileSdkVersion 24
+
 buildToolsVersion "24.0.0"
+
 minSdkVersion 16
+
 gradle plugin:gradle:2.1.2
 ## 另外:
 
