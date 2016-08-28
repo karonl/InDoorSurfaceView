@@ -43,6 +43,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
     private BitBuffer adapter;
     private boolean canPaint = false;
 
+
     public InDoorView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.setOnTouchListener(this);
