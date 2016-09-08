@@ -1,3 +1,5 @@
+# InDoorView [![Build Status](https://travis-ci.org/karonl/InDoorSurfaceView.svg?branch=master)](https://travis-ci.org/karonl/InDoorSurfaceView)
+
 ## 为何开发 InDoorView？
 
 说说这个想法的由来，之前的一个 case ，大概是开发一个可以室内选工位的 app ，点击某个座位付费就是你账号名下的。这我们很容易想到是操作整齐得像表格的座位。可事实有点不一样，因为每个区域都是不同大小并且位置不一，而我们手上的材料只有一张标识有区域的 jpg 地图。
