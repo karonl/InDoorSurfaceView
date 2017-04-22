@@ -1,1 +1,1 @@
-include ':app', ':InDoorView'
+include ':Sample', ':InDoorView'

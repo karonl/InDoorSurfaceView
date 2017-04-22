@@ -35,10 +35,10 @@ proguard/
 /captures
 
 .idea
-app/build
-InDoorSample.iml
-InDoorView/build
-InDoorView/InDoorView.iml
+/build/
+Sample/build/
+InDoorView/build/
 local.properties
-app/app.iml
+
 InDoorView/src/test/java/com/karonl/instance/PathUnitTest.java
+/.gitignore.swp
