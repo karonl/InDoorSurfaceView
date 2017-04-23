@@ -12,7 +12,7 @@
 
 示例图:
 ![点击区域将显示出店铺信息](https://leanclub.cn/741690-01c611a26b251661.png)
-
+MP4: http://7xjzrl.com1.z0.glb.clouddn.com/Screenrecord-2017-04-23-21-01-32-006.mp4
 
 ## 原理:
 
