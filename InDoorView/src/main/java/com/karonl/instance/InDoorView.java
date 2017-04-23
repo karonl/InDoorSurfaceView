@@ -31,10 +31,12 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
     private static final float VELOCITY_MULTI = 1f;// 滑动速度加权，计算松手后移动距离
     private static final int FRAME_INTERVAL = 5;// 帧时间
 
+    private static final int CLICK = 0;// 点击
     private static final int DRAG = 1;// 拖动
     private static final int ZOOM = 2;// 放大
     private int mStatus = 0;//状态
     private int mClick = 0;//状态
+    private int mCScroll = 0; //插值
     private float mStartDistance; //初始距离
     private float mPicWidth, mPicHeight; //图案宽度,图案高度,实时状态
     private float screenWidth, screenHeight;
@@ -144,7 +146,9 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
             }
             long endTime = System.currentTimeMillis();
 
-            /**计算出绘画一次更新的毫秒数**/
+            /**
+             * 计算出绘画一次更新的毫秒数
+             * **/
             int diffTime = (int) (endTime - startTime);
             if (diffTime < FRAME_INTERVAL) { //default:18
                 try {
@@ -256,7 +260,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
             case MotionEvent.ACTION_DOWN:
                 x = (int) event.getX();
                 y = (int) event.getY();
-                mClick = 0;
+                mClick = CLICK;
                 mStartPoint.set(event.getX(), event.getY());
                 mStatus = DRAG;
                 canPaint = true;
@@ -271,13 +275,12 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
                 break;
             case MotionEvent.ACTION_MOVE:
                 if( Math.abs(x - event.getX()) < 3 || Math.abs(y - event.getY()) < 3 ){
-                    mClick = 0;
+                    mClick = CLICK; // 防止手滑的误差
                 } else {
                     if (mStatus == DRAG) {
                         drawMap(event);
-                        mClick = 1;
+                        mClick = DRAG;
 
-                        //获得VelocityTracker对象，并且添加滑动对象
                         if (mVelocityTracker == null) {
                             mVelocityTracker = VelocityTracker.obtain();
                         }
@@ -286,30 +289,32 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
                     } else {
                         if (event.getPointerCount() == 1) return true;
                         zoomMap(event);
-                        mClick = 1;
+                        mClick = DRAG;
                     }
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(mClick == 0) {
+
+                if(mClick == CLICK) { //点击图案
                     clickMap(event);
                     canPaint = false;
                 } else {
+                    //获得VelocityTracker对象，并且添加滑动对象
                     int dx = 0;
                     int dy = 0;
-                    if(mVelocityTracker != null){
+                    if (mVelocityTracker != null) {
                         mVelocityTracker.computeCurrentVelocity(100);
-                        dx = (int) ( mVelocityTracker.getXVelocity() * VELOCITY_MULTI);
+                        dx = (int) (mVelocityTracker.getXVelocity() * VELOCITY_MULTI);
                         dy = (int) (mVelocityTracker.getYVelocity() * VELOCITY_MULTI);
                     }
-                    mScroller.startScroll((int) mStartPoint.x, (int) mStartPoint.y, dx, dy);
-                    invalidate();
+                    mScroller.startScroll((int) mStartPoint.x, (int) mStartPoint.y, dx, dy, 500);
+                    invalidate(); //触发computeScroll
+                    //回收VelocityTracker对象
+                    if (mVelocityTracker != null) {
+                        mVelocityTracker.clear();
+                    }
                 }
 
-                //回收VelocityTracker对象
-                if (mVelocityTracker != null) {
-                    mVelocityTracker.clear();
-                }
 
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -323,8 +328,8 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
     @Override
     public void computeScroll() {
         //先判断mScroller滚动是否完成
-        if (mScroller.computeScrollOffset()) {
-            Log.e("test","computeScroll "+mScroller.getCurrX()+" "+mScroller.getCurrY());
+        if (mScroller.computeScrollOffset() && mStatus == 1 && mClick == 1) {
+            //Log.i("test","computeScroll "+mScroller.getCurrX()+" "+mScroller.getCurrY());
             //这里调用View的scrollTo()完成实际的滚动
             PointF currentPoint = new PointF();
             currentPoint.set(mScroller.getCurrX(), mScroller.getCurrY());
@@ -333,14 +338,15 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
             mStartPoint = currentPoint;
             bx += offsetX;
             by += offsetY;
-
-            postInvalidate();
-        }else{
-            if(mVelocityTracker != null)//初始化的时候图像先要显示
-                canPaint = false;
+            postInvalidate(); //相当于递归computeScroll();目的是触发computeScroll
+        } else if(mStatus == 1 && mClick == 1) {
+            canPaint = false;
+            Log.d("scroll","finish");
         }
         super.computeScroll();
     }
+
+
 
     // 界面初始化
     @Override
