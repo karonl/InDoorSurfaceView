@@ -11,8 +11,8 @@
 该控件可让室内图片上的区域拥有点击事件，可用于**开发电影院选座、商场购物地图、展位摊位在线预定、办公场地租赁工位**等需要操作不规则区域的功能。
 
 示例图:
-![点击区域将显示出店铺信息](https://leanclub.cn/741690-01c611a26b251661.png)
-MP4: http://7xjzrl.com1.z0.glb.clouddn.com/Screenrecord-2017-04-23-21-01-32-006.mp4
+![点击区域将显示出店铺信息](https://leanclub.cn/741690-01c611a26b251661.png)      
+MP4 Demo: http://7xjzrl.com1.z0.glb.clouddn.com/Screenrecord-2017-04-23-21-01-32-006.mp4
 
 ## 原理:
 
@@ -117,10 +117,10 @@ view.onFramesListener(new InDoorSurfaceView.FramesListener() {
 ```
 
 ## 环境:
-compileSdkVersion 25
-buildToolsVersion "25.0.2"
-minSdkVersion 16
-gradle plugin:gradle:2.4.0-alpha6
+compileSdkVersion 25     
+buildToolsVersion "25.0.2"     
+minSdkVersion 16    
+gradle plugin:gradle:2.4.0-alpha6     
 
 ## 另外:
 如果程序有 bug 和改善方法，感谢提 Issues ，有劳指教!
