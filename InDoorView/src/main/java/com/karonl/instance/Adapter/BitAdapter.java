@@ -22,7 +22,7 @@ public abstract class BitAdapter implements BitBuffer {
     private List<PathUnit> pathUnitList = null;
     private AttrListener listener;
 
-    public BitAdapter(){
+    public BitAdapter() {
 
     }
 
@@ -35,9 +35,9 @@ public abstract class BitAdapter implements BitBuffer {
         this.listener = listener;
     }
 
-    public void drawBitmap(BitAdapter child){
+    public void drawBitmap(BitAdapter child) {
         Bitmap bg = child.getBgBitmap();
-        if(bg != null) {
+        if (bg != null) {
             //根据底图申请缓冲区
             bitmap = Bitmap.createBitmap(bg.getWidth(), bg.getHeight(), Bitmap.Config.RGB_565);//创建内存位图
             //创建空白绘图画布
@@ -61,6 +61,7 @@ public abstract class BitAdapter implements BitBuffer {
     }
 
     public abstract List<PathUnit> getPathUnit();
+
     public abstract Bitmap getBgBitmap();
 
     @Override
@@ -70,8 +71,9 @@ public abstract class BitAdapter implements BitBuffer {
 
     //获得画笔
     private Paint paint;//画笔属性
-    private Paint getPaint(){
-        if(paint == null) {
+
+    private Paint getPaint() {
+        if (paint == null) {
             paint = new Paint();
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);

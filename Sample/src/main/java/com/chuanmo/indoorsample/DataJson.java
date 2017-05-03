@@ -15,25 +15,26 @@ public class DataJson {
             "}]}";
     JSONTokener jsonTokener = new JSONTokener(json);
     JSONArray array;
+
     public DataJson() {
         try {
             JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
             array = jsonObject.getJSONArray("areas");
 
-        }catch (JSONException e){
+        } catch (JSONException e) {
 
         }
     }
 
-    public int size(){
+    public int size() {
         return array.length();
     }
 
-    public JSONObject getArray(int i){
+    public JSONObject getArray(int i) {
         JSONObject json = null;
         try {
-            json = (JSONObject)this.array.get(i);
-        }catch (JSONException e){
+            json = (JSONObject) this.array.get(i);
+        } catch (JSONException e) {
 
         }
         return json;

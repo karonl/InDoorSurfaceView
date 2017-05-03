@@ -14,6 +14,8 @@ import java.util.List;
 public interface BitBuffer {
 
     List<PathUnit> getPathUnit();
+
     Bitmap getBitBuffer();
+
     void setOnAdapterListener(BitAdapter.AttrListener listener);
 }

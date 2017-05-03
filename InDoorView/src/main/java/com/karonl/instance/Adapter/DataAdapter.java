@@ -16,24 +16,24 @@ public class DataAdapter extends BitAdapter {
     private List<PathUnit> list;
     private Bitmap bmp;
 
-    public DataAdapter(){
+    public DataAdapter() {
 
     }
 
-    public DataAdapter(List<PathUnit> list){
+    public DataAdapter(List<PathUnit> list) {
         this.list = list;
         drawBitmap(this);
         drawBuffer(this);
     }
 
-    public DataAdapter(List<PathUnit> list, Bitmap bmp){
+    public DataAdapter(List<PathUnit> list, Bitmap bmp) {
         this.bmp = bmp;
         this.list = list;
         drawBitmap(this);
         drawBuffer(this);
     }
 
-    public void setList(List<PathUnit> list){
+    public void setList(List<PathUnit> list) {
         this.list = list;
     }
 
@@ -42,7 +42,7 @@ public class DataAdapter extends BitAdapter {
         this.bmp = bmp;
     }
 
-    public void refreshData(){
+    public void refreshData() {
         drawBitmap(this);
         drawBuffer(this);
         if (!bmp.isRecycled()) {
@@ -58,7 +58,7 @@ public class DataAdapter extends BitAdapter {
 
     @Override
     public List<PathUnit> getPathUnit() {
-        if(list == null)
+        if (list == null)
             return new ArrayList<>();
         else
             return list;

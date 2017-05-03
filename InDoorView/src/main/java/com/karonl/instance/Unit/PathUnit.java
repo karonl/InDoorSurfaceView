@@ -18,11 +18,11 @@ public class PathUnit {
     public Region region;
     public Path path;
 
-    public PathUnit(List<PointF> list){
+    public PathUnit(List<PointF> list) {
         int i = 0;
         path = new Path();
-        for(PointF point : list){
-            if(i == 0)path.moveTo(point.x, point.y);
+        for (PointF point : list) {
+            if (i == 0) path.moveTo(point.x, point.y);
             path.lineTo(point.x, point.y);
             i++;
         }
@@ -32,19 +32,19 @@ public class PathUnit {
         region.setPath(path, new Region((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom));
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public void setId(String id){
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getId(){
+    public String getId() {
         return this.id;
     }
 
