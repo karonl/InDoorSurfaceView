@@ -48,7 +48,6 @@ public class DrawThread extends Thread {
         if (canPaint && surfaceHolder != null) { // fps: !stop
             long startTime = System.currentTimeMillis();
             c = surfaceHolder.lockCanvas(); // 注意lock的时间消耗
-            Log.e("lock", System.currentTimeMillis() - startTime + "");
             try {
                 synchronized (surfaceHolder) {
                     // 调用外部接口
@@ -73,7 +72,8 @@ public class DrawThread extends Thread {
                 }
 
             } finally {
-                surfaceHolder.unlockCanvasAndPost(c);
+                if (c != null)
+                    surfaceHolder.unlockCanvasAndPost(c);
             }
         } else { // fps: stop
             try {
