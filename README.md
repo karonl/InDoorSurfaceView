@@ -1,78 +1,78 @@
-# InDoorView [![Build Status](https://travis-ci.org/karonl/InDoorSurfaceView.svg?branch=master)](https://travis-ci.org/karonl/InDoorSurfaceView)
+# InDoorView [![Build Status](https://travis-ci.org/karonl/InDoorSurfaceView.svg?branch=master)](https://travis-ci.org/karonl/InDoorSurfaceView)  [![Jitpack](https://jitpack.io/v/karonl/InDoorSurfaceView.svg)](https://jitpack.io/#karonl/InDoorSurfaceView)
+无依赖第三方库的室内户型图交互组件库     
+no-dependency Indoor map view library.     
 
-## 为何开发 InDoorView？
+## 目录结构
+该 master branch 为完整的演示项目，其中 Sample 为应用模块，InDoorView 为库模块，LICENSE 为版权说明。
 
-说说这个想法的由来，之前的一个 case ，大概是开发一个可以室内选工位的 app ，点击某个座位付费就是你账号名下的。这我们很容易想到是操作整齐得像表格的座位。可事实有点不一样，因为每个区域都是不同大小并且位置不一，而我们手上的材料只有一张标识有区域的 jpg 地图。
+## 快速体验
+1. 下载apk： https://leanclub.cn/InDoorViewSample.apk    
+2. 查看mp4： https://leanclub.cn/Screenrecord20170504.mp4      
+3. 示例图片：     
+<img width="218" height="389" alt="demo pic" src="https://leanclub.cn/indoorviewdemopic.png" /> 
 
-一开始我使用游戏引擎来做，结果可想而知，为了个简单功能引入整个库非常不明智。所以我开始着手开发一个可以精巧的操作图里不规则区域的库。
+## 应用场景
+该控件可让室内图片上的区域拥有点击事件，可用于**开发电影院选座、商场购物地图、展位摊位在线预定、办公场地租赁工位**等需要操作不规则区域功能。
+如果这正是你所需要的，可以点击该库的 Star _(thanks for your star✨)_，便于收藏学习和关注最新动态。
 
-## 应用场景:
-
-该控件可让室内图片上的区域拥有点击事件，可用于**开发电影院选座、商场购物地图、展位摊位在线预定、办公场地租赁工位**等需要操作不规则区域的功能。
-
-MP4视频Demo: http://7xjzrl.com1.z0.glb.clouddn.com/Screenrecord20170504.mp4
-![图片预览](https://leanclub.cn/741690-01c611a26b251661.png)      
-
-
-## 原理:
-
-把读取地图底图 bitmap 和使用 Paint 的钢笔路径集合一同绘制到一个 canvas 上保存，并通过继承 SurfaceView 把 canvas 绘制到双缓画布中，通过 canvas.drawBitmap 实现缩放和移动，重写 view 点击事件结合 Region 判断点击坐标位于哪个区域内，再通过接口反馈事件。
-
-采用把所有图案内容事先缓存到 canvas 的方法，使用非 UI 线程进行绘制，可实现每秒 60 次左右的界面绘制，实现流畅的移动和缩放操作；在没交互情况下，暂停绘制及刷新以节约计算资源。
-
-## 特性:
-
-1. 性能较强，绘制达到 60 帧上下
-2. 支持缩放以及拖动
-3. 直接使用原生 SurfaceView ，无需导入庞大的引擎库
-
-
-## Github:
-
-https://github.com/karonl/InDoorSurfaceView (thanks for your star✨)
-
-## Demo:
-
-直接使用 Android Studio 导入工程即可运行
-
-## 如何导入 InDoorView 库:
-
-1. clone 到本地
-2. 复制 InDoorView 文件夹到目标项目的根目录 (InDoorView 使用的是 apply plugin: 'com.android.library')
-3. 在 settings.gradle 文件中 include ':InDoorView'
-4. 在主模块(一般是 app 文件夹)中的 build.gradle 中添加依赖
-
-```json
-dependencies {
-   compile project(':InDoorView')
+## 快速开始
+1. Add it in your root build.gradle at the end of repositories:
+```groovy
+allprojects {
+  repositories {
+    jcenter()
+    maven { url 'https://jitpack.io' }
+  }
 }
 ```
-
-5. 点击 Sync 进行构建
-6. 根目录的 src 是 demo ，可做参考
-**注:直接导入工程是 demo ，可直接运行测试**
-
-## 如何使用:
-
-初始化 在 xml 文件中使用进行声明
+2. 在 app 应用模块的 build.gradle 引入
+```groovy
+dependencies {
+  compile 'com.github.karonl:InDoorSurfaceView:1.0'
+}
+```
+3. 在 xml 文件中进行组件声明
 ```xml
 <com.karonl.instance.InDoorView
     android:id="@+id/surface"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ```
-在对应的 activity 中进行引用，并通过设置适配器，把底图和区域 list 填入，并 refreshData();
+4. 在对应的 activity 中进行引用，并通过设置适配器，把底图和区域 list 填入，最后 refreshData();
 ```java
-InDoorSurfaceView view = (InDoorSurfaceView)findViewById(R.id.surface);
+InDoorView view = (InDoorView)findViewById(R.id.surface);
+  ....
+adapter.refreshData();
+```
+## 为何开发 InDoorView？
+开发InDoorView的主要目标是解决人与图片中特殊图案的交互需求。
+
+缘起之前我负责的一个app（类似共享短期工位），主要功能是允许用户在室内户型图上选择工位，并且点击某个工位后付费即可把工位点亮。这和我们常见的电影院选座有点不一样，因为大部分区域是非规则图形，里面摆放的也是不同大小、位置不一的多边形，不同房间也无法复用，这自然无法通过循环绘制固定图形来实现交互。最后，我们决定采用最常见的标识有区域的 jpg 图片来做底图以节约制图成本，这意味着我们需要和这些标记区域进行交互。
+
+一开始我使用游戏引擎来做，该需求并不复杂很快得到满足，但为了个简单功能引入整个库非常不明智，并且体积也大了不少，加载速度也受到影响。所以我决定着手开发一个可以精巧的操作图里不规则区域的第三方库。
+
+## InDoorView 的原理？
+把读取地图底图 bitmap 和使用 Paint 的钢笔路径集合一同绘制到一个 canvas 上保存，并通过继承 SurfaceView 把 canvas 绘制到双缓画布中，通过 canvas.drawBitmap 实现缩放和移动，重写 view 点击事件结合 Region 判断点击坐标位于哪个区域内，再通过接口反馈事件。
+
+采用把所有图案内容事先缓存到 canvas 的方法，使用非 UI 线程进行绘制，可实现每秒 60 次左右的界面绘制，实现流畅的移动和缩放操作；在没交互情况下，暂停绘制及刷新以节约计算资源。
+
+## 特性
+1. 性能较强，绘制达到 60 帧上下
+2. 支持缩放以及拖动
+3. 直接继承自原生 SurfaceView ，无需导入庞大的引擎库
+
+## 接口说明
+Activity 中对 view 的控制代码如下：
+```java
+InDoorView view = (InDoorView)findViewById(R.id.surface);
 DataAdapter adapter =  new DataAdapter();
 view.setAdapter(adapter);//初始化
 adapter.setBmp(bmp);//设置图片(底图)
 adapter.setList(list);//设置数组(图上的可点区域)
 adapter.refreshData();
 ```
-上面代码的 list 的具体设置看这里:
-
-(输入钢笔路径相对于图片左上角的节点坐标)
+    
+代码中的 list 的具体设置看这里:(输入钢笔路径需要是图片左上角的相对坐标)
 ```java
 //每个图案的节点坐标集合
 private List<PointF> getList(){
@@ -94,33 +94,31 @@ private void getUnitList(){
 }
 ```
 **注：从资源读取的图片对应的坐标要乘上 desity ，网络加载的图片则不用**
-
-## 接口说明: 
-
+     
 通过该接口可以返回点击到的区域的 PathUnit 元素，可通过此来获取区域名字等信息
 ```java
-view.setOnClickMapListener(new InDoorSurfaceView.onClickMapListener() {
+view.setOnClickMapListener(new InDoorView.onClickMapListener() {
     @Override
     public void onClick(PathUnit region) {
     //读取 pathunit
     }
 }  
 ```
+     
 该接口是 fps 帧率
 ```java
-view.onFramesListener(new InDoorSurfaceView.FramesListener() {
+view.onFramesListener(new InDoorView.FramesListener() {
     @Override
     public void onRefresh(float number) {
     //帧率
     }
 }    
 ```
+## 库生产环境:
+compileSdkVersion 24     
+minSdkVersion 16     
 
-## 环境:
-compileSdkVersion 25     
-buildToolsVersion "25.0.2"     
-minSdkVersion 16    
-gradle plugin:gradle:2.3.1    
+# License
+   
+Apache License 2.0
 
-## 另外:
-如果程序有 bug 和改善方法，感谢提 Issues ，有劳指教!

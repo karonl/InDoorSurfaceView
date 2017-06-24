@@ -18,7 +18,6 @@ import com.karonl.instance.Adapter.BitAdapter;
 import com.karonl.instance.Interface.BitBuffer;
 import com.karonl.instance.Interface.DrawFramesListener;
 import com.karonl.instance.Interface.FramesListener;
-import com.karonl.instance.Unit.DrawThread;
 import com.karonl.instance.Unit.PathUnit;
 
 import java.util.concurrent.Executors;
