@@ -55,6 +55,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
 
     private Scroller mScroller;
     private VelocityTracker mVelocityTracker;
+    private Paint loopPaint;
 
     public InDoorView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -62,6 +63,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
         getHolder().addCallback(this);
         surfaceHolder = getHolder();
         mScroller = new Scroller(context); // 插值器
+        loopPaint = new Paint();
     }
 
     public void setAdapter(BitBuffer adapter) {
@@ -114,7 +116,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
                 if (c != null && adapter != null && adapter.getBitBuffer() != null) {
                     c.drawColor(Color.GRAY);
                     c.scale(scale, scale);
-                    c.drawBitmap(adapter.getBitBuffer(), bx / scale, by / scale, new Paint());
+                    c.drawBitmap(adapter.getBitBuffer(), bx / scale, by / scale, loopPaint);
                 }
             }
         });
